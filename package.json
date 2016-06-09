@@ -1,27 +1,24 @@
 {
-  "name": "allex_qlib",
-  "version": "0.0.1",
-  "description": "",
+  "name": "allex_qextlowlevellib",
+  "version": "1.0.0",
+  "description": "Extensions to the allex_qlowlevellib",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git@gitlab.hers.rs:allex_libs/q.git"
+    "url": "git+https://github.com/allex-lowlevel-libs/qext.git"
   },
   "keywords": [
-    "allex",
-    "libs"
+    "ecosystem:AllexJS",
+    "q",
+    "extensions"
   ],
-  "author": {
-    "name": "HERS development team"
-  },
+  "author": "Andrija Petrovic <andrija.hers@gmail.com>",
   "license": "ISC",
-  "gitHead": "4591402a730c07d858657ca4de4383d777140b9d",
-  "readme": "ERROR: No README data found!",
-  "_id": "allex_qlib@0.0.1",
-  "_shasum": "8635cce02056c6b3157a6fa8d1e0022712a94c9c",
-  "_from": "git+ssh://git@gitlab.hers.rs:allex_libs/q.git",
-  "_resolved": "git+ssh://git@gitlab.hers.rs:allex_libs/q.git#4591402a730c07d858657ca4de4383d777140b9d"
+  "bugs": {
+    "url": "https://github.com/allex-lowlevel-libs/qext/issues"
+  },
+  "homepage": "https://github.com/allex-lowlevel-libs/qext#readme"
 }
