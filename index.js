@@ -111,6 +111,14 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll) {
     );
     return promise;
   }
+
+  function waitForPromise (promise, timeout) {
+    var d = q.defer();
+    q.delay(timeout, new Error('Timeout')).done(d.reject.bind(d));
+    promise.done(d.resolve.bind(d));
+    return d.promise;
+  }
+
   var ret = {
     chainPromises : require('./chainpromises')(q, runNext),
     JobBase: JobBase,
@@ -127,7 +135,8 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll) {
     methodinvoker: methodinvoker,
     promise2defer: promise2defer,
     promise2execution: promise2execution,
-    promise2console: promise2console
+    promise2console: promise2console,
+    waitForPromise : waitForPromise
   };
 
   ret.PromiseChainMapReducerJob = require('./promiseexecutionmapreducercreator')(inherit, applier, JobBase, PromiseMapperJob);
