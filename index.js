@@ -1,4 +1,4 @@
-function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll) {
+function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFunc) {
   'use strict';
 
   var JobBase = require('./jobbasecreator')(q),
@@ -95,7 +95,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll) {
         return ret;
       },
       errcb || standardErrReporter,
-      notifycb || lib.dummyFunc
+      notifycb || dummyFunc
     );
   }
   function promise2console(promise, caption) {
