@@ -5,18 +5,26 @@ function createJobCollection(Fifo, Map, containerDestroyAll) {
     j.reject(new Error('JOB_COLLECTION_DESTROYING'));
   }
 
-  function Lock() {
+  function Lock(locks, name) {
+    this.locks = locks;
+    this.name = name;
     this.defer = null;
     this.q = new Fifo();
     this.nexter = this.next.bind(this);
     this.activator = this.activate.bind(this);
   }
   Lock.prototype.destroy = function () {
+    this.emptycb = null;
     this.activator = null;
     this.nexter = null;
     this.q.drain(destructionDrainer);
     this.q.destroy();
     this.defer = null;
+    if (this.locks && this.name) {
+      this.locks.remove(this.name);
+    }
+    this.name = null;
+    this.locks = null;
   };
   Lock.prototype.add = function (job) {
     if (this.defer) {
@@ -36,7 +44,11 @@ function createJobCollection(Fifo, Map, containerDestroyAll) {
   };
   Lock.prototype.next = function () {
     this.defer = null;
-    this.q.pop(this.activator);
+    if (this.q.length) {
+      this.q.pop(this.activator);
+    } else {
+      this.destroy();
+    }
   };
 
   function JobCollection () {
@@ -50,7 +62,7 @@ function createJobCollection(Fifo, Map, containerDestroyAll) {
     var lock = this.__locks.get(jobclassname),
       p = job.defer.promise;
     if (!lock) {
-      lock = new Lock();
+      lock = new Lock(this.__locks, jobclassname);
       this.__locks.add(jobclassname, lock);
     }
     lock.add(job);
