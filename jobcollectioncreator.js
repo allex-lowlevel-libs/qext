@@ -14,7 +14,6 @@ function createJobCollection(Fifo, Map, containerDestroyAll) {
     this.activator = this.activate.bind(this);
   }
   Lock.prototype.destroy = function () {
-    this.emptycb = null;
     this.activator = null;
     this.nexter = null;
     this.q.drain(destructionDrainer);
@@ -36,8 +35,8 @@ function createJobCollection(Fifo, Map, containerDestroyAll) {
   Lock.prototype.activate = function (job) {
     var p = job.defer.promise;
     p.then(
-      this.next.bind(this),
-      this.next.bind(this)
+      this.nexter,
+      this.nexter
     );
     this.defer = p;
     job.go();
