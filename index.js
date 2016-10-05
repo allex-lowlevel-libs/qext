@@ -18,6 +18,15 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
       return ret;
     }
   };
+  function rejecter(val) {
+    var _q = q;
+    return function() {
+      var ret = _q.reject(val);
+      _q = null;
+      val = null;
+      return ret;
+    }
+  };
   function propertyreturner(obj, propertyname) {
     var _q = q;
     return function () {
@@ -128,6 +137,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     PromiseMapperJob: PromiseMapperJob,
     JobCollection: require('./jobcollectioncreator')(Fifo, Map, containerDestroyAll),
     returner: returner,
+    rejecter: rejecter,
     propertyreturner: propertyreturner,
     resultpropertyreturner: resultpropertyreturner,
     executor: executor,
