@@ -17,6 +17,10 @@ function createPromiseArrayFulfillerJob(q, inherit, JobBase) {
   };
   PromiseArrayFulfillerJob.prototype.doPromise = function (index, result) {
     //console.log('doing promise at', index, 'out of', this.promiseproviderarry.length);
+    if (!this.promiseproviderarry){
+      //in case Job was destroyed ....
+      return;
+    }
     if (index >= this.promiseproviderarry.length) {
       this.resolve(result);
       return;
