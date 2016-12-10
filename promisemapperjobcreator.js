@@ -14,7 +14,7 @@ function createPromiseMapper(q, inherit, JobBase, PromiseArrayFulfillerJob) {
   };
   PromiseMapperJob.prototype.go = function () {
     var result = this.paramarry, p = this.defer.promise;
-    var chainer = new PromiseArrayFulfillerJob(this.promiseproviderarry.map(this.resultPutter.bind(this, result)));
+    var chainer = new PromiseArrayFulfillerJob(this.promiseproviderarry.map(this.resultPutter.bind(this, q, result)));
     chainer.defer.promise.then(
       this.resolve.bind(this, result),
       this.reject.bind(this)
@@ -22,13 +22,16 @@ function createPromiseMapper(q, inherit, JobBase, PromiseArrayFulfillerJob) {
     chainer.go();
     return p;
   };
-  PromiseMapperJob.prototype.resultPutter = function (result, promiseprovider) {
+  PromiseMapperJob.prototype.resultPutter = function (_q, result, promiseprovider) {
     return function (input) {
       try {
       return promiseprovider(input)
         .then(function (resolved) {
+          var ret = _q(resolved);
           result.push(resolved);
-          return q(resolved);
+          _q = null;
+          result = null;
+          return ret;
         });
       } catch(e) {
         console.error(e.stack);

@@ -135,6 +135,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     PromiseExecutorJob: PromiseExecutorJob,
     PromiseHistoryChainerJob: PromiseHistoryChainerJob,
     PromiseMapperJob: PromiseMapperJob,
+    PromiseExecutionMapperJob: PromiseExecutionMapperJob,
     JobCollection: require('./jobcollectioncreator')(Fifo, Map, containerDestroyAll),
     returner: returner,
     rejecter: rejecter,
