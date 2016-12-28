@@ -67,10 +67,30 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
       return ret;
     };
   }
+  function caller(fn, ctx) {
+    return function (result) {
+      var ret = fn.call(ctx, result);
+      fn = null;
+      ctx = null;
+      return ret;
+    };
+  }
   function methodinvoker(methodname) {
-    var args = Array.prototype.slice.call(arguments, 1);
+    var args = Array.prototype.slice.call(arguments, 1), _q = q, ist = q.isThenable;
     return function (instance) {
-      var ret = q(instance[methodname].apply(instance, args));
+      var ret;
+      if (instance) {
+        try { 
+          ret = _q(instance[methodname].apply(instance, args));
+          ret = ist(ret) ? ret : _q(ret);
+        } catch (e) {
+          ret = _q.reject(e);
+        }
+      } else {
+        ret = _q.reject(new Error('Promise resolved nothing that could be invoked with method '+methodname));
+      }
+      _q = null;
+      ist = null;
       methodname = null;
       args = null;
       return ret;
@@ -121,9 +141,45 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     return promise;
   }
 
+  function promise2decision (promise, decisionfunc, rejectionfunc, notificationfunc) {
+    var ist = q.isThenable, _q = q;
+    return promise.then(
+      function (result) {
+        var ret;
+        if ('function' !== typeof decisionfunc) {
+          ret = _q.reject(new Error('Decision function provided turned out not to be a Function at all'));
+        } else {
+          try {
+            ret = decisionfunc(result);
+            ret = ist(ret) ? ret : _q(ret);
+          } catch (e) {
+            ret = _q.reject(e);
+          }
+        }
+        ist = null;
+        _q = null;
+        return ret;
+      },
+      ('function' === typeof rejectionfunc) ? function (reason) {
+        try {
+          ret = rejectionfunc(reason);
+          ret = ist(ret) ? ret : _q(ret);
+        } catch (e) {
+          ret = _q.reject(e);
+        }
+        ist = null;
+        _q = null;
+        return ret;
+      } : null,
+      ('function' === typeof notificationfunc) ? function (progress) {
+        notificationfunc(progress);
+      } : null
+    );
+  }
+
   function waitForPromise (promise, timeout) {
     var d = q.defer();
-    q.delay(timeout, new Error('Timeout')).done(d.reject.bind(d));
+    q.delay(timeout, new Error('Timeout after '+timeout+' msecs')).done(d.reject.bind(d));
     promise.done(d.resolve.bind(d));
     return d.promise;
   }
@@ -143,10 +199,12 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     resultpropertyreturner: resultpropertyreturner,
     executor: executor,
     applier: applier,
+    caller: caller,
     methodinvoker: methodinvoker,
     promise2defer: promise2defer,
     promise2execution: promise2execution,
     promise2console: promise2console,
+    promise2decision: promise2decision,
     waitForPromise : waitForPromise
   };
 
