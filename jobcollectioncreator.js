@@ -49,6 +49,12 @@ function createJobCollection(Fifo, Map, containerDestroyAll) {
       this.destroy();
     }
   };
+  Lock.prototype.lastPendingJob = function () {
+    if (!this.q) {
+      return null;
+    }
+    return this.q.last();
+  };
 
   function JobCollection () {
     this.__locks = new Map();
@@ -66,6 +72,13 @@ function createJobCollection(Fifo, Map, containerDestroyAll) {
     }
     lock.add(job);
     return p;
+  };
+  JobCollection.prototype.lastPendingJobFor = function (jobclassname) {
+    var lock = this.__locks.get(jobclassname);
+    if (!lock) {
+      return null;
+    }
+    return lock.lastPendingJob();
   };
   
   return JobCollection;
