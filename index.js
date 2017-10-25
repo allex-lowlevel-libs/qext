@@ -142,39 +142,50 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
   }
 
   function promise2decision (promise, decisionfunc, rejectionfunc, notificationfunc) {
-    var ist = q.isThenable, _q = q;
-    return promise.then(
+    var ist = q.isThenable, d = q.defer(), ret = d.promise, _p2d = promise2defer, _df = decisionfunc;
+    promise.then(
       function (result) {
-        var ret;
-        if ('function' !== typeof decisionfunc) {
-          ret = _q.reject(new Error('Decision function provided turned out not to be a Function at all'));
+        var res;
+        if ('function' !== typeof _df) {
+          d.reject(new Error('Decision function provided turned out not to be a Function at all'));
         } else {
           try {
-            ret = decisionfunc(result);
-            ret = ist(ret) ? ret : _q(ret);
+            res = _df(result);
+            if (ist(res)) {
+              _p2d(res, d);
+            } else {
+              d.resolve(res);
+            }
           } catch (e) {
-            ret = _q.reject(e);
+            d.reject(e);
           }
         }
+        _df = null;
+        _p2d = null;
+        d = null;
         ist = null;
-        _q = null;
-        return ret;
       },
       ('function' === typeof rejectionfunc) ? function (reason) {
+        var res;
         try {
-          ret = rejectionfunc(reason);
-          ret = ist(ret) ? ret : _q(ret);
+          res = rejectionfunc(reason);
+          if (ist(res)) {
+            _p2d(res, d);
+          } else {
+            d.resolve(res);
+          }
         } catch (e) {
-          ret = _q.reject(e);
+          d.reject(e);
         }
+        _p2d = null;
+        d = null;
         ist = null;
-        _q = null;
-        return ret;
       } : null,
       ('function' === typeof notificationfunc) ? function (progress) {
         notificationfunc(progress);
       } : null
     );
+    return ret;
   }
 
   function waitForPromise (promise, timeout) {
