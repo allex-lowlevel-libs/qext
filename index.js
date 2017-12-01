@@ -180,10 +180,10 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
         _p2d = null;
         d = null;
         ist = null;
-      } : null,
+      } : d.reject.bind(d),
       ('function' === typeof notificationfunc) ? function (progress) {
-        notificationfunc(progress);
-      } : null
+        d.notify(notificationfunc(progress));
+      } : d.notify.bind(d)
     );
     return ret;
   }
