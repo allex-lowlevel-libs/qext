@@ -188,6 +188,20 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     return ret;
   }
 
+  function thenableRead (thingy) {
+    if (!q.isThenable(thingy)) {
+      return q(thingy);
+    }
+    return thingy;
+  }
+
+  function thenAny (thingy, resolver, rejecter, notifier) {
+    if (q.isThenable(thingy)) {
+      thingy.then(resolver, rejecter, notifier);
+    }
+    resolver(thingy);
+  }
+
   function waitForPromise (promise, timeout) {
     var d = q.defer();
     q.delay(timeout, new Error('Timeout after '+timeout+' msecs')).done(d.reject.bind(d));
@@ -216,6 +230,8 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     promise2execution: promise2execution,
     promise2console: promise2console,
     promise2decision: promise2decision,
+    thenableRead : thenableRead,
+    thenAny : thenAny,
     waitForPromise : waitForPromise
   };
 
