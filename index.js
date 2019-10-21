@@ -2,6 +2,9 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
   'use strict';
 
   var JobBase = require('./jobbasecreator')(q),
+    JobOnDestroyableBase = require('./jobondestroyablebasecreator')(q, inherit, JobBase),
+    JobOnDestroyable = require('./jobondestroyablecreator')(inherit, JobOnDestroyableBase),
+    JobOnComplexDestroyable = require('./joboncomplexdestroyablecreator')(inherit, JobOnDestroyableBase),
     PromiseArrayFulfillerJob = require('./promisearrayfulfillerjob')(q, inherit, JobBase),
     PromiseChainerJob= require('./promisechainerjobcreator')(inherit, PromiseArrayFulfillerJob),
     PromiseExecutorJob= require('./promiseexecutorjobcreator')(inherit, PromiseArrayFulfillerJob),
@@ -212,6 +215,9 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
   var ret = {
     chainPromises : require('./chainpromises')(q, runNext),
     JobBase: JobBase,
+    JobOnDestroyableBase: JobOnDestroyableBase,
+    JobOnDestroyable: JobOnDestroyable,
+    JobOnComplexDestroyable: JobOnComplexDestroyable,
     PromiseChainerJob: PromiseChainerJob,
     PromiseExecutorJob: PromiseExecutorJob,
     PromiseHistoryChainerJob: PromiseHistoryChainerJob,

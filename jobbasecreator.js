@@ -37,6 +37,30 @@ function createJobBase(q) {
       this.defer.notify(progress);
     }
   };
+  JobBase.prototype.okToGo = function () {
+    var ptp = this.peekToProceed();
+    if (!ptp.ok) {
+      ptp.val = q.reject(ptp.val);
+    }
+    return ptp;
+  };
+  JobBase.prototype.peekToProceed = function () {
+    var ret = {ok: true, val: null};
+    if (!this.defer) {
+      ret.ok = false;
+      ret.val = new Error('ALREADY_DESTROYED');
+      return ret;
+    }
+    ret.val = this.defer.promise;
+    return ret;
+  };
+  JobBase.prototype.okToProceed = function () {
+    var ptp = this.peekToProceed();
+    if (!ptp.ok) {
+      this.reject(ptp.val);
+    }
+    return ptp.ok;
+  };
 
   return JobBase;
 }
