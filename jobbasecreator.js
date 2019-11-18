@@ -40,7 +40,8 @@ function createJobBase(q) {
   JobBase.prototype.okToGo = function () {
     var ptp = this.peekToProceed();
     if (!ptp.ok) {
-      ptp.val = q.reject(ptp.val);
+      this.reject(ptp.val);
+      ptp.val = q.isThenable(ptp.val) ? ptp.val : q.reject(ptp.val);
     }
     return ptp;
   };
