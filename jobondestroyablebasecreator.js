@@ -15,9 +15,14 @@ function createJobOnDestroyableBase (q, inherit, JobBase) {
     if (!ptp.ok) {
       return ptp.val;
     }
-    if (!this._destroyableOk()) {
+    try {
+      if (!this._destroyableOk()) {
+        ptp.ok = false;
+        ptp.val = new Error('DESTROYABLE_REFERENCE_DESTROYED');
+      }
+    } catch (e) {
       ptp.ok = false;
-      ptp.val = new Error('DESTROYABLE_REFERENCE_DESTROYED');
+      ptp.val = e;
     }
     return ptp;
   };

@@ -37,6 +37,7 @@ function createPromiseMapper(q, inherit, JobBase, PromiseArrayFulfillerJob) {
         });
       } catch(e) {
         console.error(e);
+        throw e;
       }
     }
   };

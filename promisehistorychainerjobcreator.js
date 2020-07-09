@@ -26,17 +26,16 @@ function createPromiseHistoryChainer(q, inherit, JobBase, PromiseChainerJob) {
   };
   PromiseHistoryChainerJob.prototype.resultPutter = function (result, promiseprovider) {
     return function (input) {
-      console.log('giving input to promiseprovider', promiseprovider);
       try {
       return promiseprovider(input)
         .then(function (resolved) {
-          console.log('and got resolve', resolved);
           result.push(resolved);
           return q(result);
         });
       } catch(e) {
         console.error(e.stack);
         console.error(e);
+        return q.reject(e);
       }
     }
   };

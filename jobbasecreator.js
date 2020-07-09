@@ -62,6 +62,13 @@ function createJobBase(q) {
     }
     return ptp.ok;
   };
+  JobBase.prototype.performStep = function (stepmethodname) {
+    try {
+      return this[stepmethodname].apply(this, Array.prototype.slice.call(arguments, 1));
+    } catch (e) {
+      this.reject(e);
+    }
+  };
 
   return JobBase;
 }

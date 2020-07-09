@@ -120,7 +120,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
         } catch(e) {
           console.error(e.stack);
           console.error(e);
-          ret = _q.reject(e);
+          throw e;
         }
         cb = null;
         _q = null;
