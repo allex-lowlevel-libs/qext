@@ -33,7 +33,23 @@ function createJobCollection(Fifo, Map, containerDestroyAll) {
     }
   };
   Lock.prototype.activate = function (job) {
-    var p = job.defer.promise;
+    var p;
+    if (!job) {
+      console.log('no job to activate, going next');
+      this.nexter();
+      return;
+    }
+    if (!job.defer) {
+      console.log('job', job.constructor.name, 'has no defer, going next');
+      this.nexter();
+      return;
+    }
+    if (!job.defer.promise) {
+      console.log('job', job.constructor.name, 'has no promise on defer, going next');
+      this.nexter();
+      return;
+    }
+    p = job.defer.promise;
     p.then(
       this.nexter,
       this.nexter
