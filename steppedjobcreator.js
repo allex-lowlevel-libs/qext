@@ -14,8 +14,12 @@ function createSteppedJob (q, inherit, mylib) {
   function SteppedJob (config, defer) {
     JobBase.call(this, defer);
     this.config = config;
+    this.resolveListener = null;
     this.notifyListener = null;
     this.step = -1; //will be bumped to zero in first runStep
+    if (config.resolve && isFunction(config.resolve.attach)){
+      this.resolveListener = config.resolve.attach(this.resolve.bind(this));
+    }
     if (config.notify && isFunction(config.notify.attach)){
       this.notifyListener = config.notify.attach(this.notify.bind(this));
     }
@@ -30,6 +34,10 @@ function createSteppedJob (q, inherit, mylib) {
       this.notifyListener.destroy();
     }
     this.notifyListener = null;
+    if (this.resolveListener) {
+      this.resolveListener.destroy();
+    }
+    this.resolveListener = null;
     this.config = null;    
     JobBase.prototype.destroy.call(this);
   };
