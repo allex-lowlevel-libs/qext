@@ -112,6 +112,7 @@ function createSteppedJob (q, inherit, mylib) {
 
   function SteppedJobOnInstance (instance, methodnamesteps, defer) {
     SteppedJob.call(this, {
+      resolve: instance.resolve,
       notify: instance.notify,
       shouldContinue: isFunction(instance.shouldContinue) ? instance.shouldContinue.bind(instance) : null,
       onDesctruction: isFunction(instance.destroy) ? instance.destroy.bind(instance) : null,
