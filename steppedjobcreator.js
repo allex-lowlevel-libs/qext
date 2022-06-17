@@ -27,7 +27,11 @@ function createSteppedJob (q, inherit, mylib) {
   inherit(SteppedJob, JobBase);
   SteppedJob.prototype.destroy = function () {
     if (this.config && isFunction(this.config.onDesctruction)) {
-      this.config.onDesctruction.call(this);
+      try {
+        this.config.onDesctruction.call(this);
+      } catch (e) {
+        console.error('Error in SteppedJob.config.onDestruction', e);
+      }
     }
     this.step = null;
     if (this.notifyListener) {
