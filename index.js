@@ -244,7 +244,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
 
   ret.PromiseChainMapReducerJob = require('./promiseexecutionmapreducercreator')(inherit, applier, JobBase, PromiseMapperJob);
   ret.PromiseExecutionMapReducerJob = require('./promiseexecutionmapreducercreator')(inherit, applier, JobBase, PromiseExecutionMapperJob);
-  require('./steppedjobcreator')(q, inherit, ret);
+  require('./steppedjobcreator')(q, inherit, runNext, ret);
   
   return ret;
 }

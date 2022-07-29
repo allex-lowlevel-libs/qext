@@ -1,4 +1,4 @@
-function createSteppedJob (q, inherit, mylib) {
+function createSteppedJob (q, inherit, runNext, mylib) {
   'use strict';
 
   var JobBase = mylib.JobBase;
@@ -50,7 +50,7 @@ function createSteppedJob (q, inherit, mylib) {
     if (!ok.ok) {
       return ok.val;
     }
-    this.runStep(null);
+    runNext(this.runStep.bind(this, null));
     return ok.val;
   };
   SteppedJob.prototype.peekToProceed = function () {
