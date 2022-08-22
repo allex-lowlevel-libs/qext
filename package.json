@@ -1,6 +1,6 @@
 {
   "name": "allex_qextlowlevellib",
-  "version": "2.3.7",
+  "version": "2.3.8",
   "description": "Extensions to the allex_qlowlevellib",
   "main": "index.js",
   "scripts": {

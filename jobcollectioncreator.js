@@ -1,4 +1,4 @@
-function createJobCollection(Fifo, Map, containerDestroyAll) {
+function createJobCollection(Fifo, Map, containerDestroyAll, q) {
   'use strict';
 
   function destructionDrainer (j) {
@@ -96,6 +96,47 @@ function createJobCollection(Fifo, Map, containerDestroyAll) {
     }
     return lock.lastPendingJob();
   };
+  JobCollection.prototype.runMany = function (jobclassname, jobarry) {
+    var d, ret, i, _i, last, results;
+    results = [];
+    if (!(jobarry && jobarry.length>0)) {
+      return q(results);
+    }
+    d = q.defer();
+    ret = d.promise;
+    for (i=0; i<jobarry.length; i++) {
+      _i = i;
+      last = this.run('.', jobarry[i]).then(
+        resolve_arryer.bind(results),
+        reject_arryer.bind(results),
+        notify_arryer.bind(d, results, _i)        
+      );
+      _i = null;
+    }
+    results = null;
+    last.then(d.resolve.bind(d), d.reject.bind(d));
+    d = null;
+    return ret;
+  }
+  //static, this is array
+  function resolve_arryer (res) {
+    this.push({state: 'fulfilled', value: res});
+    return this;
+  }
+  //static, this is array
+  function reject_arryer (reason) {
+    this.push({state: 'rejected', value: reason});
+    return this;
+  }  
+  //static, this is defer
+  function notify_arryer (arry, index, progress) {
+    arry.push({state: 'rejected', value: res});
+    this.notify({
+      results: arry,
+      index: index,
+      progress: progress
+    })
+  }
   
   return JobCollection;
 }
