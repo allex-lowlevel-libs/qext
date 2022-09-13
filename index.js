@@ -20,7 +20,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
       val = null;
       return ret;
     }
-  };
+  }
   function rejecter(val) {
     var _q = q;
     return function() {
@@ -29,7 +29,21 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
       val = null;
       return ret;
     }
-  };
+  }
+  function logandthrower (caption) {
+    return function (reason) {
+      console.log(require('util').inspect(caption, {depth:null}), reason);
+      caption = null;
+      throw reason;
+    }
+  }
+  function errorandthrower (caption) {
+    return function (reason) {
+      console.error(require('util').inspect(caption, {depth:null}), reason);
+      caption = null;
+      throw reason;
+    }
+  }
   function propertyreturner(obj, propertyname) {
     var _q = q;
     return function () {
@@ -227,6 +241,8 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     JobCollection: require('./jobcollectioncreator')(Fifo, Map, containerDestroyAll, q),
     returner: returner,
     rejecter: rejecter,
+    logandthrower: logandthrower,
+    errorandthrower: errorandthrower,
     propertyreturner: propertyreturner,
     resultpropertyreturner: resultpropertyreturner,
     executor: executor,

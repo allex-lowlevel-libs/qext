@@ -106,7 +106,7 @@ function createJobCollection(Fifo, Map, containerDestroyAll, q) {
     ret = d.promise;
     for (i=0; i<jobarry.length; i++) {
       _i = i;
-      last = this.run('.', jobarry[i]).then(
+      last = this.run(jobclassname, jobarry[i]).then(
         resolve_arryer.bind(results),
         reject_arryer.bind(results),
         notify_arryer.bind(d, results, _i)        
@@ -130,12 +130,11 @@ function createJobCollection(Fifo, Map, containerDestroyAll, q) {
   }  
   //static, this is defer
   function notify_arryer (arry, index, progress) {
-    arry.push({state: 'rejected', value: res});
     this.notify({
       results: arry,
       index: index,
       progress: progress
-    })
+    });
   }
   
   return JobCollection;
