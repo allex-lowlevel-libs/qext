@@ -71,18 +71,25 @@ function createSteppedJob (q, inherit, runNext, mylib) {
       };
     }
     if (isFunction(this.config.shouldContinue)) {
-      check = this.config.shouldContinue.call(this);
-      if (check) {
+      try {
+        check = this.config.shouldContinue.call(this);
+        if (check) {
+          return {
+            ok: false,
+            val: check
+          };
+        }
+      } catch (e) {
         return {
           ok: false,
-          val: check
-        };
+          val: e
+        }
       }
     }
     return ret;
   };
   SteppedJob.prototype.runStep = function (lastresult) {
-    var func, funcres;
+    var func, funcres, prematureresult;
     if (!this.okToProceed()) {
       return;
     }
@@ -90,6 +97,12 @@ function createSteppedJob (q, inherit, runNext, mylib) {
     if (this.step >= this.config.steps.length) {
       this.resolve(lastresult);
       return;
+    }
+    if (isFunction(this.config.finalResult)) {
+      prematureresult = this.config.finalResult();
+      if ('undefined' != typeof prematureresult) {
+        this.resolve(prematureresult);
+      }
     }
     func = this.config.steps[this.step];
     if (!isFunction(func)) {
