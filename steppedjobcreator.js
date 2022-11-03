@@ -14,6 +14,7 @@ function createSteppedJob (q, inherit, runNext, mylib) {
   function SteppedJob (config, defer) {
     JobBase.call(this, defer);
     this.config = config;
+    this.shouldContinueResult = void 0;
     this.resolveListener = null;
     this.notifyListener = null;
     this.step = -1; //will be bumped to zero in first runStep
@@ -42,6 +43,7 @@ function createSteppedJob (q, inherit, runNext, mylib) {
       this.resolveListener.destroy();
     }
     this.resolveListener = null;
+    this.shouldContinueResult = null;
     this.config = null;    
     JobBase.prototype.destroy.call(this);
   };
@@ -54,7 +56,7 @@ function createSteppedJob (q, inherit, runNext, mylib) {
     return ok.val;
   };
   SteppedJob.prototype.peekToProceed = function () {
-    var ret = JobBase.prototype.peekToProceed.call(this), check;
+    var ret = JobBase.prototype.peekToProceed.call(this);
     if (!(ret && ret.ok)) {
       return ret;
     }
@@ -72,11 +74,11 @@ function createSteppedJob (q, inherit, runNext, mylib) {
     }
     if (isFunction(this.config.shouldContinue)) {
       try {
-        check = this.config.shouldContinue.call(this);
-        if (check) {
+        this.shouldContinueResult = this.config.shouldContinue.call(this);
+        if (this.shouldContinueResult && this.shouldContinueResult instanceof Error) {
           return {
             ok: false,
-            val: check
+            val: this.shouldContinueResult
           };
         }
       } catch (e) {
@@ -89,7 +91,7 @@ function createSteppedJob (q, inherit, runNext, mylib) {
     return ret;
   };
   SteppedJob.prototype.runStep = function (lastresult) {
-    var func, funcres, prematureresult;
+    var func, funcres;
     if (!this.okToProceed()) {
       return;
     }
@@ -98,11 +100,8 @@ function createSteppedJob (q, inherit, runNext, mylib) {
       this.resolve(lastresult);
       return;
     }
-    if (isFunction(this.config.finalResult)) {
-      prematureresult = this.config.finalResult();
-      if ('undefined' != typeof prematureresult) {
-        this.resolve(prematureresult);
-      }
+    if ('undefined' != typeof this.shouldContinueResult) {
+      this.resolve(this.shouldContinueResult);
     }
     func = this.config.steps[this.step];
     if (!isFunction(func)) {

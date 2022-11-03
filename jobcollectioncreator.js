@@ -125,7 +125,7 @@ function createJobCollection(Fifo, Map, containerDestroyAll, q) {
   }
   //static, this is array
   function reject_arryer (reason) {
-    this.push({state: 'rejected', value: reason});
+    this.push({state: 'rejected', reason: reason});
     return this;
   }  
   //static, this is defer

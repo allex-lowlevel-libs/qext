@@ -227,6 +227,25 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     return d.promise;
   }
 
+  function manyResultsAnalysis (manyresults, valueprocessor) {
+    var ret = {values: [], errors: []}, i, res;
+    if (!(manyresults && manyresults.length)) {
+      return ret;
+    }
+    for (i=0; i<manyresults.length; i++) {
+      res = manyresults[i];
+      switch (res.state) {
+        case 'fulfilled': 
+          ret.values.push(valueprocessor ? valueprocessor(res.value) : res.value);
+          break;
+        case 'rejected':
+          ret.errors.push(res.reason);
+          break;
+      }
+    }
+    return ret;
+  }
+
   var ret = {
     chainPromises : require('./chainpromises')(q, runNext),
     JobBase: JobBase,
@@ -255,7 +274,8 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     promise2decision: promise2decision,
     thenableRead : thenableRead,
     thenAny : thenAny,
-    waitForPromise : waitForPromise
+    waitForPromise : waitForPromise,
+    manyResultsAnalysis: manyResultsAnalysis
   };
 
   ret.PromiseChainMapReducerJob = require('./promiseexecutionmapreducercreator')(inherit, applier, JobBase, PromiseMapperJob);
