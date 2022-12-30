@@ -214,10 +214,9 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
 
   function thenAny (thingy, resolver, rejecter, notifier) {
     if (q.isThenable(thingy)) {
-      thingy.then(resolver, rejecter, notifier);
-      return;
+      return thingy.then(resolver, rejecter, notifier);
     }
-    resolver(thingy);
+    return resolver(thingy);
   }
 
   function waitForPromise (promise, timeout) {
