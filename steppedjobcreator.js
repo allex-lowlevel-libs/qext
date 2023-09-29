@@ -102,6 +102,7 @@ function createSteppedJob (q, inherit, runNext, mylib) {
     }
     if ('undefined' != typeof this.shouldContinueResult) {
       this.resolve(this.shouldContinueResult);
+      return;
     }
     func = this.config.steps[this.step];
     if (!isFunction(func)) {
