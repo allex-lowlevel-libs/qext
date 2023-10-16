@@ -157,6 +157,13 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     );
     return promise;
   }
+  function promiseerror2console (promise) {
+    return promise.then(null, errorer);
+  }
+  function errorer (reason) {
+    console.error(reason);
+    throw reason;
+  }
 
   function promise2decision (promise, decisionfunc, rejectionfunc, notificationfunc) {
     var ist = q.isThenable, d = q.defer(), ret = d.promise, _p2d = promise2defer, _df = decisionfunc;
@@ -270,6 +277,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     promise2defer: promise2defer,
     promise2execution: promise2execution,
     promise2console: promise2console,
+    promiseerror2console: promiseerror2console,
     promise2decision: promise2decision,
     thenableRead : thenableRead,
     thenAny : thenAny,
