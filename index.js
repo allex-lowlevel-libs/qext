@@ -1,4 +1,4 @@
-function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFunc) {
+function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFunc, isArray, isFunction, isString, liberror) {
   'use strict';
 
   var JobBase = require('./jobbasecreator')(q),
@@ -288,6 +288,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
   ret.PromiseChainMapReducerJob = require('./promiseexecutionmapreducercreator')(inherit, applier, JobBase, PromiseMapperJob);
   ret.PromiseExecutionMapReducerJob = require('./promiseexecutionmapreducercreator')(inherit, applier, JobBase, PromiseExecutionMapperJob);
   require('./steppedjobcreator')(q, inherit, runNext, ret);
+  require('./jobcores')(inherit, isArray, isFunction, isString, liberror, ret);
   
   return ret;
 }
