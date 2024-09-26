@@ -1,15 +1,7 @@
-function createSteppedJob (q, inherit, runNext, mylib) {
+function createSteppedJob (q, inherit, isArray, isFunction, runNext, mylib) {
   'use strict';
 
   var JobBase = mylib.JobBase;
-
-  function isFunction (thingy) {
-    return thingy && (typeof thingy === 'function');
-  }
-
-  function isArray (thingy) {
-    return 'object' === typeof(thingy) && thingy instanceof Array;
-  }
 
   function SteppedJob (config, defer) {
     JobBase.call(this, defer);

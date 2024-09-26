@@ -263,6 +263,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
     PromiseHistoryChainerJob: PromiseHistoryChainerJob,
     PromiseMapperJob: PromiseMapperJob,
     PromiseExecutionMapperJob: PromiseExecutionMapperJob,
+    AsyncJob: require('./asyncjobcreator')(q, isFunction, promise2defer),
     JobCollection: require('./jobcollectioncreator')(Fifo, Map, containerDestroyAll, q),
     returner: returner,
     rejecter: rejecter,
@@ -287,7 +288,7 @@ function createlib (q, inherit, runNext, Fifo, Map, containerDestroyAll, dummyFu
 
   ret.PromiseChainMapReducerJob = require('./promiseexecutionmapreducercreator')(inherit, applier, JobBase, PromiseMapperJob);
   ret.PromiseExecutionMapReducerJob = require('./promiseexecutionmapreducercreator')(inherit, applier, JobBase, PromiseExecutionMapperJob);
-  require('./steppedjobcreator')(q, inherit, runNext, ret);
+  require('./steppedjobcreator')(q, inherit, isArray, isFunction, runNext, ret);
   require('./jobcores')(inherit, isArray, isFunction, isString, liberror, ret);
   
   return ret;
