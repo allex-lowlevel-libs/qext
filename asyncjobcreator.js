@@ -5,12 +5,14 @@ function createAsyncJob (q, isFunction, promise2defer) {
     return typeof thingy !== 'undefined';
   }
 
-  function AsyncJob (mainexecutor, mvexecutor, options) {
+  function AsyncJob (options) {
     this.defer = q.defer();
     this.finalResult = void 0;
     this.notStartedYet = true;
+    this.options = options;
   }
   AsyncJob.prototype.destroy = function () {
+    this.options = null;
     this.notStartedYet = null;
     this.finalResult = null;
     this.defer = null;
